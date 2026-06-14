@@ -1,0 +1,27 @@
+﻿<svg viewBox="0 0 900 900" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0d1a38" />
+      <stop offset="100%" stop-color="#090b1f" />
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#5de7ff" />
+      <stop offset="100%" stop-color="#8d4cff" />
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="18" result="coloredBlur" />
+      <feMerge>
+        <feMergeNode in="coloredBlur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="900" height="900" rx="140" fill="url(#bg)" />
+  <circle cx="450" cy="450" r="325" fill="none" stroke="#2956b8" stroke-width="6" opacity="0.24" />
+  <circle cx="450" cy="450" r="260" fill="none" stroke="#4dbbea" stroke-width="4" opacity="0.18" />
+  <path d="M300 250 L520 250 C570 250 620 300 620 350 L620 390 C620 440 570 490 520 490 L380 490 L380 560 C380 620 320 680 260 680" fill="none" stroke="url(#accent)" stroke-width="40" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)" opacity="0.95" />
+  <path d="M540 270 L650 270 C700 270 760 330 760 390 L760 510 C760 570 700 630 640 630 L520 630" fill="none" stroke="#94b7ff" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" opacity="0.9" />
+  <path d="M360 520 C420 520 480 460 480 400" fill="none" stroke="#72e0ff" stroke-width="44" stroke-linecap="round" opacity="0.85" />
+  <text x="450" y="820" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="72" fill="#eff9ff" font-weight="700">Scintix</text>
+  <text x="450" y="870" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="32" fill="#8ba8cc" letter-spacing="4">SMART SOLUTIONS. LASTING IMPACT.</text>
+</svg>

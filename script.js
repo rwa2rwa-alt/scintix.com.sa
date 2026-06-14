@@ -8,10 +8,10 @@ const translatableNodes = document.querySelectorAll('[data-i18n]');
 const ariaLabelNodes = document.querySelectorAll('[data-i18n-aria-label]');
 const html = document.documentElement;
 
-// 🔗 روابط نماذج الاتصال حسب لغة الموقع
-const contactLinks = {
-  ar: '#contact', // التمرير الداخلي للنموذج العربي المدمج بالصفحة
-  en: 'https://airtable.com/YOUR_AIRTABLE_LINK' // ⚠️ ضعي رابط نموذج Airtable الإنجليزي الفعلي هنا
+// ─── روابط نماذج Airtable ────────────────────────────────────────────────────
+const FORM_LINKS = {
+  ar: 'https://airtable.com/appkYurrIYGIup8QH/shrUOqxX19nXgoHqR',
+  en: 'https://airtable.com/appkYurrIYGIup8QH/shrAt8THaVjwmP3LR'
 };
 
 const translations = {
@@ -56,9 +56,14 @@ const translations = {
     'plans.zenith.three': 'مراقبة 24/7',
     'plans.choose': 'اختر',
     'clients.label': 'شركاؤنا',
-    'footer.title': 'هل أنت مستعد للانطلاق مع Scintix؟',
-    'footer.description': 'ابدأ استراتيجية رقمية جديدة مع فريق متخصص في التحول الرقمي والتجربة المتميزة.',
-    'footer.cta': 'ابدأ الآن'
+    'footer.title': 'هل أنتِ مستعدة للانطلاق مع Scintix؟',
+    'footer.description': 'ابدئي استراتيجية رقمية جديدة مع فريق متخصص في التحول الرقمي والتجربة المتميزة.',
+    'footer.cta': 'ابدأ الآن',
+    'subfooter.about':   'من نحن ورؤيتنا',
+    'subfooter.policy':  'السياسات',
+    'subfooter.contact': 'جهات التواصل',
+    'subfooter.support': 'الدعم',
+    'subfooter.cr':      'السجل التجاري'
   },
   en: {
     'page.title': 'Scintix | Smart digital growth solutions',
@@ -80,7 +85,7 @@ const translations = {
     'features.apps.title': 'Integrated Apps',
     'features.apps.body': 'We build digital platforms that connect your operations, unify the customer experience, and support your growth goals.',
     'features.security.title': 'Advanced Security',
-    'features.security.body': 'End-to-end protection with secure architecture and strong data privacy to keep your customers’ trust.',
+    'features.security.body': 'End-to-end protection with secure architecture and strong data privacy to keep your customers trust.',
     'features.ux.title': 'Refined User Experience',
     'features.ux.body': 'Professional, clear interfaces that increase engagement, simplify workflows, and strengthen your brand identity.',
     'features.support.title': 'Ongoing Support',
@@ -102,24 +107,23 @@ const translations = {
     'plans.choose': 'Choose',
     'clients.label': 'Our clients',
     'footer.title': 'Ready to launch with Scintix?',
-    'footer.description': 'Start a new digital strategy with a team specialized in digital transformation and premium experience design.',
-    'footer.cta': 'Get Started'
+    'footer.description': 'Start a new digital strategy with a team specialized in digital transformation and premium experience.',
+    'footer.cta': 'Get Started',
+    'subfooter.about':   'About & Vision',
+    'subfooter.policy':  'Policies',
+    'subfooter.contact': 'Contact Info',
+    'subfooter.support': 'Support',
+    'subfooter.cr':      'Commercial Registration'
   }
 };
 
 const currencyLabelsByLang = {
-  ar: {
-    sar: 'SAR / شهرياً',
-    usd: '$ / month'
-  },
-  en: {
-    sar: 'SAR / month',
-    usd: '$ / month'
-  }
+  ar: { sar: 'SAR / شهرياً', usd: '$ / month' },
+  en: { sar: 'SAR / month',  usd: '$ / month' }
 };
 
 const state = {
-  lang: localStorage.getItem('scintix-lang') || 'ar',
+  lang:     localStorage.getItem('scintix-lang')     || 'ar',
   currency: localStorage.getItem('scintix-currency') || 'sar'
 };
 
@@ -129,38 +133,143 @@ function formatPrice(value, currency) {
     minimumFractionDigits: currency === 'usd' ? 2 : 0,
     maximumFractionDigits: 2
   }).format(displayValue);
-
   return currency === 'usd' ? `$ ${formatted}` : `SAR ${formatted}`;
 }
 
-// 🛠️ دالة التحديث الشاملة لجميع أزرار الاتصال و "ابدأ الآن"
-function updateContactButtons(lang) {
-  // تحديد كافة الأزرار التي تؤدي للاتصال بما فيها زر الفوتر (footer.cta) وزر الاستشارة
-  const buttons = document.querySelectorAll('a[href="#contact"], a[href^="https://airtable.com"], [data-i18n="cta.consult"], [data-i18n="hero.secondary"], [data-i18n="footer.cta"]');
-  
-  buttons.forEach(button => {
-    // التأكد من أن العنصر هو رابط (Tag A) ليتمكن من الانتقال
-    if (button.tagName === 'A') {
-      button.setAttribute('href', contactLinks[lang]);
-      
-      if (lang === 'en') {
-        button.setAttribute('target', '_blank');
-        button.setAttribute('rel', 'noopener noreferrer');
-      } else {
-        button.removeAttribute('target');
-        button.removeAttribute('rel');
-      }
-    } else {
-      // إذا كان العنصر زراً عاديًا (Button)، نقوم بإضافة حدث الضغط عليه برمجياً
-      button.onclick = function() {
-        if (lang === 'en') {
-          window.open(contactLinks['en'], '_blank');
-        } else {
-          document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' });
-        }
-      };
-    }
+function updateFormLinks(lang) {
+  document.querySelectorAll('a[data-form-link]').forEach(link => {
+    link.href = FORM_LINKS[lang];
+    link.setAttribute('target', '_blank');
+    link.setAttribute('rel', 'noopener noreferrer');
   });
+}
+
+function buildSubFooter(lang) {
+  const existing = document.getElementById('scintix-subfooter');
+  if (existing) existing.remove();
+
+  const t = translations[lang];
+  const CR_NUMBER = '1234567890'; // ← ضعي رقم السجل التجاري الفعلي هنا
+  const isAr = lang === 'ar';
+  const year = new Date().getFullYear();
+
+  const navItems = [
+    { key: 'subfooter.about',   href: '#about'   },
+    { key: 'subfooter.policy', href: 'policies.html' }
+    { key: 'subfooter.contact', href: '#contact' },
+    { key: 'subfooter.support', href: '#support' }
+  ];
+
+  const sf = document.createElement('div');
+  sf.id = 'scintix-subfooter';
+  sf.setAttribute('dir', isAr ? 'rtl' : 'ltr');
+  sf.style.cssText = [
+    'margin-top:0',
+    'padding:28px 34px 24px',
+    'background:rgba(2,5,18,0.98)',
+    'border-top:1px solid rgba(255,255,255,0.06)',
+    'font-family:Segoe UI,Tahoma,Geneva,Verdana,sans-serif'
+  ].join(';');
+
+  // ── روابط التنقل ──────────────────────────────────────────────────────────
+  const navDiv = document.createElement('div');
+  navDiv.style.cssText = 'display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:20px';
+
+  navItems.forEach(({ key, href }) => {
+    const a = document.createElement('a');
+    a.href = href;
+    a.textContent = t[key];
+    a.style.cssText = [
+      'color:rgba(255,255,255,0.45)',
+      'font-size:0.82rem',
+      'text-decoration:none',
+      'padding:6px 16px',
+      'border:1px solid rgba(255,255,255,0.08)',
+      'border-radius:999px',
+      'transition:all 0.2s',
+      'white-space:nowrap'
+    ].join(';');
+    a.onmouseover = () => {
+      a.style.color = '#5cf0ff';
+      a.style.borderColor = 'rgba(92,240,255,0.3)';
+    };
+    a.onmouseout = () => {
+      a.style.color = 'rgba(255,255,255,0.45)';
+      a.style.borderColor = 'rgba(255,255,255,0.08)';
+    };
+    navDiv.appendChild(a);
+  });
+
+  // ── فاصل ──────────────────────────────────────────────────────────────────
+  const divider = document.createElement('div');
+  divider.style.cssText = 'height:1px;background:rgba(255,255,255,0.05);margin-bottom:20px';
+
+  // ── صف: السجل التجاري + رؤية 2030 ────────────────────────────────────────
+  const bottomRow = document.createElement('div');
+  bottomRow.style.cssText = 'display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px';
+
+  // السجل التجاري
+  const crDiv = document.createElement('div');
+  crDiv.style.cssText = 'display:flex;align-items:center;gap:8px';
+
+  const crLabel = document.createElement('span');
+  crLabel.textContent = t['subfooter.cr'] + ':';
+  crLabel.style.cssText = 'color:rgba(255,255,255,0.25);font-size:0.75rem';
+
+  const crValue = document.createElement('span');
+  crValue.textContent = CR_NUMBER;
+  crValue.style.cssText = [
+    'color:rgba(92,240,255,0.7)',
+    'font-size:0.82rem',
+    'font-weight:600',
+    'letter-spacing:0.06em',
+    'font-family:monospace'
+  ].join(';');
+
+  crDiv.appendChild(crLabel);
+  crDiv.appendChild(crValue);
+
+  // شعار رؤية 2030 — صورة من مجلد assets
+  const visionDiv = document.createElement('div');
+  visionDiv.style.cssText = 'display:flex;align-items:center;gap:10px';
+
+  const visionLabel = document.createElement('span');
+  visionLabel.textContent = isAr ? 'نفخر بدعم رؤية المملكة 2030' : 'Proud supporter of Saudi Vision 2030';
+  visionLabel.style.cssText = 'color:rgba(255,255,255,0.3);font-size:0.75rem';
+
+  const visionImg = document.createElement('img');
+  visionImg.src = 'assets/vision2030.svg';
+  visionImg.alt = isAr ? 'رؤية 2030' : 'Vision 2030';
+  visionImg.style.cssText = 'height:40px;opacity:0.85;flex-shrink:0;object-fit:contain';
+  visionImg.onerror = function() {
+    // إذا لم يوجد الملف، أخفِ الصورة بدون خطأ
+    this.style.display = 'none';
+  };
+
+  visionDiv.appendChild(visionLabel);
+  visionDiv.appendChild(visionImg);
+
+  bottomRow.appendChild(crDiv);
+  bottomRow.appendChild(visionDiv);
+
+  // ── حقوق النشر ────────────────────────────────────────────────────────────
+  const copyright = document.createElement('p');
+  copyright.style.cssText = [
+    'text-align:center',
+    'color:rgba(255,255,255,0.2)',
+    'font-size:0.72rem',
+    'margin:18px 0 0',
+    'letter-spacing:0.04em'
+  ].join(';');
+  copyright.textContent = `© ${year} Scintix Digital Solutions. ${isAr ? 'جميع الحقوق محفوظة.' : 'All rights reserved.'}`;
+
+  // ── تجميع كل العناصر ─────────────────────────────────────────────────────
+  sf.appendChild(navDiv);
+  sf.appendChild(divider);
+  sf.appendChild(bottomRow);
+  sf.appendChild(copyright);
+
+  document.querySelector('.page-shell').appendChild(sf);
 }
 
 function applyLanguage(lang) {
@@ -170,13 +279,9 @@ function applyLanguage(lang) {
   html.dir = lang === 'en' ? 'ltr' : 'rtl';
 
   translatableNodes.forEach(node => {
-    const key = node.dataset.i18n;
+    const key   = node.dataset.i18n;
     const value = translations[lang][key];
-
-    if (!value) {
-      return;
-    }
-
+    if (!value) return;
     if (node.dataset.i18nHtml === 'true' || key === 'hero.title' || key === 'header.tagline') {
       node.innerHTML = value;
     } else {
@@ -185,19 +290,13 @@ function applyLanguage(lang) {
   });
 
   ariaLabelNodes.forEach(node => {
-    const key = node.dataset.i18nAriaLabel;
+    const key   = node.dataset.i18nAriaLabel;
     const value = translations[lang][key];
-
-    if (value) {
-      node.setAttribute('aria-label', value);
-    }
+    if (value) node.setAttribute('aria-label', value);
   });
 
   document.title = translations[lang]['page.title'];
-
-  if (langSelect) {
-    langSelect.value = lang;
-  }
+  if (langSelect) langSelect.value = lang;
 
   currencyLabels.forEach(node => {
     node.textContent = currencyLabelsByLang[lang][state.currency];
@@ -205,23 +304,20 @@ function applyLanguage(lang) {
 
   localStorage.setItem('scintix-lang', lang);
   localStorage.setItem('scintix-currency', state.currency);
-  
-  // تحديث روابط وأفعال الأزرار فور تغيير اللغة
-  updateContactButtons(lang);
+
+  updateFormLinks(lang);
   applyCurrency(state.currency);
+  buildSubFooter(lang);
 }
 
 function applyCurrency(currency) {
   state.currency = currency;
-
   priceNodes.forEach(node => {
     node.textContent = formatPrice(Number(node.dataset.price), currency);
   });
-
   currencyLabels.forEach(node => {
     node.textContent = currencyLabelsByLang[state.lang][currency];
   });
-
   localStorage.setItem('scintix-currency', currency);
 }
 
@@ -242,3 +338,6 @@ langSelect?.addEventListener('change', () => {
 });
 
 applyLanguage(state.lang);
+<script>
+(function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}const onLoad=function(){const script=document.createElement("script");script.src="https://www.chatbase.co/embed.min.js";script.id="-itf2CNf19xa0q7z76P41";script.domain="www.chatbase.co";document.body.appendChild(script)};if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)}})();
+</script>
